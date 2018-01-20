@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-enum State {
+typedef enum State {
   idle,
   sampleTemp,
   samplePow,
@@ -10,19 +10,21 @@ enum State {
   sendData,
   storeData,
   sleep
-  };
+}State;
 
 void setup() {
     // put your setup code here, to run once:
-State state = idle;
-int tempData[0:4] = {0,0,0,0,0};
-int currData = 0;
-int voltData = 0;
-int errorCode = 0b0000000000;
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  State state = idle;
+  float tempData[5] = {0.0,0.0,0.0,0.0,0.0};
+  float currData = 0.0;
+  float voltData = 0.0;
+  float errorCode = 0b0000000000;
+
 switch(state){
 
 case idle:
@@ -47,7 +49,7 @@ break;
 
 case calcTemp:
 //calculate average temp, function should check relevant portion of errorCode
-state = calcPower;
+state = calcPow;
 break;
 
 case calcPow:
