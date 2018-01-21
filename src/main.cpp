@@ -14,7 +14,7 @@ typedef enum State {
 }State;
 
 
-#define REF_RESISTOR 430.0 // reference resistor value for RTD amp
+#define REF_RESISTOR 430.0 // reference resistor value in ohms for RTD amp
 
 #define CSPIN10 10 //define spi cs pins for ease of reading
 #define CSPIN9 9
@@ -45,11 +45,10 @@ void loop() {
   State state = idle;
 
   float tempData[5] = {0.0,0.0,0.0,0.0,0.0};
+  float errorCode = 0b0000000000;
   /*
-
   float currData = 0.0;
   float voltData = 0.0;
-  float errorCode = 0b0000000000;
 */
 switch(state){
 
@@ -73,6 +72,11 @@ break;
 
 case errorCheck:
 // iterate through sampled data
+for(int i = 0; i < 5; i++){
+  if(max[i].readFault()){//iterate through temp sensors to check for faults
+    errorCode += 2^(i + 1); //add bit corresponding to faulty sensor
+  }
+}
 state = calcTemp;
 break;
 
