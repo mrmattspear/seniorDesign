@@ -1,9 +1,10 @@
 #include <Arduino.h>
-#include <Adafruit_MAX31865.h>
 #include <Wire.h>
-#include <SoftwareSerial.h>
-#include <SparkFunESP8266WiFi.h>
+#include "Adafruit_MAX31865.h"
 #include "Adafruit_INA219.h"
+#include "SoftwareSerial.h"
+#include "SparkFunESP8266WiFi.h"
+
 
 typedef enum State {
   idle,
