@@ -12,11 +12,11 @@ typedef enum State {
   samplePow,
   errorCheck,
   calcTemp,
-  sendData,
-  storeData,
-  sleep
+  sendData
+  //storeData,
+//  sleep
 }State;
-
+State state = idle;
 Adafruit_INA219 ina219;
 
 #define REF_RESISTOR 430.0 // reference resistor value in ohms for RTD amp
@@ -39,13 +39,13 @@ Adafruit_MAX31865 max[5] = {
 
 void setup() {
    // put your setup code here, to run once:
-   /*----------Debug Setup Begin------------------------------------
-    Serial.begin(115200);
+   //*----------Debug Setup Begin------------------------------------
+    Serial.begin(9600);
       while (!Serial) {
    // will pause until serial console opens
     delay(1);
     }
-    ------------Debug Setup End--------------------------------------*/
+    //------------Debug Setup End--------------------------------------*/
 
    //----------Temperature Sensor Setup Begin-----------------------
     for (int i = 0; i < 4; i++){
@@ -60,11 +60,14 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  State state = idle;
 
   float tempData[5] = {0.0,0.0,0.0,0.0,0.0};//array of float to hold sampled data from temp sensor/ amplfier modules
   int errorCode = 0b0000000000;             //int variable used to hold error code, parsed as binary value
   float power = 0;                          //float to hold sampled datum from ina219 power sensor
+  float busvoltage = 0.0;
+  float shuntvoltage = 0.0;
+  float loadvoltage = 0.0;
+  float current_mA    = 0.0;
 
 /*
   Serial.print("Current:   "); Serial.print(current_mA); Serial.println(" A"); //Display current in Amps
@@ -77,11 +80,14 @@ switch(state){
 
 case idle:
 //delay every 60s
+Serial.println("Idle");
 state = sampleTemp;
 break;
 
 case sampleTemp:
+Serial.println("Temp");
 //function for sampling temp sensors 0:4
+
 for(int i = 0; i < 5; i++){
 tempData[i] = max[i].temperature(100, REF_RESISTOR);
 }
@@ -98,21 +104,25 @@ break;
 case samplePow:
 //function for sampling pow sensor
 power = ina219.getPower_mW() * MILLIWATT_TO_WATT_CONVERSION; //sample power, convert to Watts
-
-/* Debug Messages Power Sensor
+busvoltage = ina219.getBusVoltage_V();
+shuntvoltage = ina219.getShuntVoltage_mV();
+loadvoltage = ina219.getBusVoltage_V();
+current_mA    = ina219.getCurrent_mA();
+//* Debug Messages Power Sensor
 Serial.print("Bus Voltage:   "); Serial.print(busvoltage); Serial.println(" V");
 Serial.print("Shunt Voltage: "); Serial.print(shuntvoltage); Serial.println(" mV");
 Serial.print("Load Voltage:  "); Serial.print(loadvoltage); Serial.println(" V");
 Serial.print("Current:       "); Serial.print(current_mA); Serial.println(" mA");
-Serial.print("Power:         "); Serial.print(power_mW); Serial.println(" mW");
+Serial.print("Power:         "); Serial.print(power); Serial.println(" mW");
 Serial.println("");
 delay(2000);
-*/
+//*/
 
 state = errorCheck;
 break;
 
 case errorCheck:
+Serial.println("errorCheck");
 // iterate through sampled data
 for(int i = 0; i < 5; i++){
   if(max[i].readFault()){//iterate through temp sensors to check for faults
@@ -144,6 +154,7 @@ else{//dataSend timeout
 state = storeData;
 }
 */
+state = idle;
 break;
 
   }
