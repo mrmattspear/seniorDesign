@@ -1,0 +1,15 @@
+{
+  "name": "rest-api-sd",
+  "version": "0.0.0",
+  "description": "restApiSd",
+  "main": "server.js",
+  "author": {
+    "name": "Matthew"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "mssql": "^4.1.0",
+    "typescript": "^2.7.2"
+  }
+}
